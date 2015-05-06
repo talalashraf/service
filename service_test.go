@@ -14,23 +14,19 @@ import (
 )
 
 func TestRespectsSignals(t *testing.T) {
-  signals := []string{"-INT", "-QUIT", "-TERM"}
-  for _, sig := range signals {
-    fmt.Printf("Testing %s:\n", sig)
-    out, e := RunHelperProcess("TestHelperProcess", func(process *os.Process) {
-      time.Sleep(100 * time.Millisecond)
-      exec.Command("kill", "-INT", strconv.Itoa(process.Pid)).Run()
-    })
-    if e != nil {
-      t.Errorf("Did not exit cleanly for %s: %v", sig, e)
-    }
-    fmt.Println(out)
-    if !strings.HasPrefix(out, "loading!\nstarting!\nLooping!") {
-      t.Error("Bad output for service")
-    }
-    if !strings.Contains(out, "Exiting cleanly") {
-      t.Error("Process did not exit cleanly")
-    }
+  out, e := RunHelperProcess("TestHelperProcess", func(process *os.Process) {
+    time.Sleep(100 * time.Millisecond)
+    exec.Command("kill", "-INT", strconv.Itoa(process.Pid)).Run()
+  })
+  if e != nil {
+    t.Errorf("Did not exit cleanly: %v", e)
+  }
+  fmt.Println(out)
+  if !strings.HasPrefix(out, "loading!\nstarting!\nLooping!") {
+    t.Error("Bad output for service")
+  }
+  if !strings.Contains(out, "Exiting cleanly") {
+    t.Error("Process did not exit cleanly")
   }
 }
 

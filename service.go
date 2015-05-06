@@ -44,14 +44,15 @@ func (s *Service) Timer(duration time.Duration, f func()) {
   s.wg.Done()
 }
 
-func (s *Service) ChannelReader(c chan interface{}, f func(data *interface{})) {
+func (s *Service) ChannelReader(c chan interface{}, f func(*interface{})) {
+  var data interface{}
   quit := false
   for !quit {
     select {
     case <-s.quitChannel:
       quit = true
-    case data <- c:
-      f(data)
+    case data = <- c:
+      f(&data)
     }
   }
   s.wg.Done()
