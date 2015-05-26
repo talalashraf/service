@@ -10,7 +10,7 @@ import (
   "testing"
   "time"
 
-  "github.com/ssoroka/service"
+  "../service"
 )
 
 func TestRespectsSignals(t *testing.T) {

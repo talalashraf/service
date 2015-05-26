@@ -10,6 +10,7 @@ import (
 type Service struct {
   wg          sync.WaitGroup
   quitChannel chan struct{}
+  IsQuitting  bool
 }
 
 // use once per application
@@ -32,6 +33,7 @@ func (s *Service) processSignals() {
 
 // Request that the service exits. Usually not needed. Signals are processed for you.
 func (s *Service) Quit() {
+  s.IsQuitting = true
   close(s.quitChannel)
 }
 
@@ -48,7 +50,12 @@ func (s *Service) Timer(duration time.Duration, f func()) {
       f()
     }
   }
-  s.wg.Done()
+}
+
+func (s *Service) StartTimer(duration time.Duration, f func()) {
+  s.Start(func() {
+    s.Timer(duration, f)
+  })
 }
 
 // call a callback function when there is data ready to be read from the channel
