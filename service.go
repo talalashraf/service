@@ -52,6 +52,25 @@ func (s *Service) Timer(duration time.Duration, f func()) {
   }
 }
 
+// A dynamic timer. expects a function that returns a time.Duration value, and will sleep that long before calling it again.
+// It will be called immediately on load.
+func (s *Service) DynamicTimer(f func() time.Duration) {
+  t := time.NewTicker(1 * time.Microsecond)
+  quit := false
+  for !quit {
+    select {
+    case <-s.quitChannel:
+      t.Stop()
+      quit = true
+    case <-t.C:
+      newDuration := f()
+      if !quit {
+        t = time.NewTicker(newDuration)
+      }
+    }
+  }
+}
+
 func (s *Service) StartTimer(duration time.Duration, f func()) {
   s.Start(func() {
     s.Timer(duration, f)
