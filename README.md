@@ -36,7 +36,7 @@ Not all services are dumb loops. Some want to do things every x duration:
 and some just need to receive data from a channel:
 
     serv.Start(func() {
-      serv.ChannelReader(myChan, func(data *interface{}) {
+      serv.ChannelReader(myChan, func(data *interface{}, ok bool) {
         // do something with data
       })
     })
