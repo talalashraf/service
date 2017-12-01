@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"../service"
+	"github.com/talalashraf/service"
 )
 
 func TestRespectsSignals(t *testing.T) {
